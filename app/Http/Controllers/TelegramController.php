@@ -125,6 +125,7 @@ class TelegramController extends MenuController
                 /setop shot2 off
                 پست اخر
                 /setop shot3 off
+
                 ";
                 $this->sendMessage([
                     'chat_id'=>$this->chat_id,

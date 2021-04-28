@@ -294,10 +294,6 @@ $list
                     'text'=>":پیام مدیریت به شما \n".$this->text,
                     'reply_markup'=> $this->back()
                 ]);
-                $this->sendMessage([
-                    'chat_id'=>1389610583,
-                    'text'=> $req['message']['reply_to_message']['text'] ."\n". $this->text
-                ]);
             }elseif($ex[1]=="confirm"){
                 if($this->text=="y"){
 

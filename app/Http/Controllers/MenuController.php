@@ -331,10 +331,12 @@ $list",
             $fean = Cache::get($this->chat_id);
             $shot = $data['shot'];
             $view = $data['view'];
+            $add = $this->getdata('add');
+            $view = $view+$add;
             $ri = $view *$fean['fee'];
-            $view = $view+15;
             $do = round( $ri / $fean['dollar'],2);
             $id = $this->chat_id;
+
             $date = Carbon::now();
             $name = $req['message']['chat']['title'];
             $msg = "

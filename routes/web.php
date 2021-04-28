@@ -20,7 +20,7 @@ Route::get('/', function () {
 
 Route::any('/telegram',[\App\Http\Controllers\TelegramController::class,'index']);
 Route::get('/c',function(){
-dd(Cache::get('down'));
+dd(Cache::get('log'));
 });
 Route::get('init',function (){
   foreach(Channel::where('approve',1)->get() as $g){
