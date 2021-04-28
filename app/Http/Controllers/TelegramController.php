@@ -56,6 +56,7 @@ class TelegramController extends MenuController
                 $token = substr($req['message']['text'], 7);
                 Channel::where('channel',$token)->delete();
                 $this->sendMessage([
+         
                     'chat_id'=>$this->chat_id,
                     'text'=>"کانال حذف شد!"
                 ]);
