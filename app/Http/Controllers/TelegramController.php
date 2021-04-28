@@ -60,6 +60,13 @@ class TelegramController extends MenuController
                     'text'=>"کانال حذف شد!"
                 ]);
             }
+            if ($this->text == "/wallet") {
+                $sum = Wallet::all()->sum('amount');
+                $this->sendMessage([
+                    'chat_id'=>$this->chat_id,
+                    'text'=>"موجودی همه کیف پول ها : $sum"
+                ]);
+            }
             if ($this->messageType == "message" && substr($req['message']['text'], 0, 6) == '/rembl' && !empty(substr($req['message']['text'], 7))) {
                 $token = substr($req['message']['text'], 7);
                 Channel::where('channel',$token)->delete();
