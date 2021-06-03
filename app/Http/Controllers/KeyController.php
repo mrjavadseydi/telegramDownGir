@@ -43,7 +43,7 @@ class KeyController extends Controller
     }
     public function WalletKey()
     {
-        $btn = Keyboard::button([['💵 موجودی حساب 💵'],['🎫 برداشت ووچر 🎫'], ['برگشت 🔙']]);
+        $btn = Keyboard::button([['💵 موجودی حساب 💵'],['🎫 برداشت ووچر 🎫'], ['تراکنش ها'],['برگشت 🔙']]);
         return Keyboard::make(['keyboard' => $btn, 'resize_keyboard' => true, 'one_time_keyboard' => true]);
     }
 }

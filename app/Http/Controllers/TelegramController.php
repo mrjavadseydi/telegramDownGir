@@ -56,7 +56,7 @@ class TelegramController extends MenuController
                 $token = substr($req['message']['text'], 7);
                 Channel::where('channel',$token)->delete();
                 $this->sendMessage([
-         
+
                     'chat_id'=>$this->chat_id,
                     'text'=>"کانال حذف شد!"
                 ]);
@@ -270,6 +270,9 @@ class TelegramController extends MenuController
             break;
             case "🆔 ثبت دان 🆔":
                 $this->down($req);
+            break;
+            case "تراکنش ها":
+                $this->deposit();
             break;
             case "/end":
                 $this->end($req);

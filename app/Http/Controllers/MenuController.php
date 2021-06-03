@@ -3,12 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Channel;
+use App\Models\Deposit;
 use App\Models\Down;
 use App\Models\Wallet;
+
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Telegram\Bot\Laravel\Facades\Telegram;
+use Barryvdh\DomPDF\Facade as PDF;
+use Telegram\Bot\FileUpload\InputFile;
 
 class MenuController extends DataController
 {
@@ -293,7 +298,7 @@ $list",
         if($this->text<=$w){
             $user_id = $req['message']['from']['username'] ?? $req['message']['from']['first_name'];
             $remain = $w - $c1;
-            $this->sendMessage([
+            $res = $this->sendMessage([
                 'chat_id'=>$this->getdata('money'),
                 'text'=>$this->chat_id."**^money**^
 کاربر:$user_id
@@ -302,8 +307,16 @@ $list",
 مبلغ برداشت:$this->text $
 "
             ]);
+
             Wallet::where('chat_id',$this->chat_id)->update([
                 'amount'=>round($w-(round($this->text,2)),2)
+            ]);
+
+            Deposit::create([
+                'amount'=>$this->text,
+                'payed'=>false,
+                'chat_id'=>$this->chat_id,
+                'message_id'=>$res['message_id']
             ]);
             $this->sendMessage([
                 'chat_id'=> $this->chat_id,
@@ -364,4 +377,26 @@ $list",
             ]);
         }
     }
+
+    public function deposit(){
+       $dep = Deposit::where('chat_id',$this->chat_id)->get();
+       $chat_id= $this->chat_id;
+       $pdf = PDF::loadView('table',compact('chat_id','dep'));
+       $file = uniqid()."dep.pdf";
+       $pdf->save(public_path($file));
+    //    return "";
+       $doc = InputFile::create(public_path($file));
+       try{
+           Telegram::sendDocument([
+               'chat_id'=>$chat_id,
+               'document'=>$doc,
+               'reply_markup'=> $this->WalletKey()
+           ]);
+       }catch(Exception $e){
+
+       }
+       unlink(public_path($file));
+    }
+
+
 }

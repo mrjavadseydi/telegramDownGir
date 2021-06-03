@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Channel;
+use App\Models\Deposit;
 use App\Models\Down;
 use App\Models\Wallet;
 use Carbon\Carbon;
@@ -40,8 +41,9 @@ class DataController extends KeyController
                     'channel'=>$e,
                     'approve'=>false
                 ]);
+
                 $data[]= $ch['id'];
-                    $i++;
+                $i++;
                 $this->sendMessage([
                     'chat_id'=> $this->chat_id,
                     'text'=>"کانال ".$e."ثبت شد",
@@ -54,7 +56,7 @@ class DataController extends KeyController
             }
 
         }
-        $i = count($ex);
+        $i = count($data);
         if($i>0){
             $uniq = uniqid();
             Cache::put($uniq, $data);
@@ -282,9 +284,9 @@ $list
             if($ex[1]=="money"||$ex[1]=="down"){
                 try {
                     Telegram::editMessageText([
-                        'chat_id' =>$req['message']['from']['id'],
+                        'chat_id' =>$req['message']['chat']['id'],
                         'message_id' =>$req['message']['reply_to_message']['message_id'],
-                        'text' => $req['message']['reply_to_message']['text'] . "\n پاسخ داده شد  ".$this->text
+                        'text' => $req['message']['reply_to_message']['text'] . "\n پاسخ داده شد\n  ".$this->text
                     ]);
                 } catch (TelegramResponseException $e) {
                     echo 1;
@@ -294,6 +296,11 @@ $list
                     'text'=>":پیام مدیریت به شما \n".$this->text,
                     'reply_markup'=> $this->back()
                 ]);
+                if($ex[1]=="money"){
+                    Deposit::where([['chat_id',$ex[0]],['message_id',$req['message']['reply_to_message']['message_id']]])->update([
+                        'payed'=>true
+                    ]);
+                }
             }elseif($ex[1]=="confirm"){
                 if($this->text=="y"){
 
@@ -321,6 +328,7 @@ $list
                     'text'=>":پیام مدیریت به شما \n".$this->text,
                     'reply_markup'=> $this->back()
                 ]);
+
             }
             elseif($ex[1]=="resid"&&$this->text=="/revert"){
                 $data = Cache::get($ex[0]);
@@ -397,7 +405,9 @@ $list
                     $w = Wallet::where('chat_id',$data['chat_id'])->first();
                     $al = $w['amount']+$data['per'];
                     $d = Cache::get($data['uniq']);
-
+                    if(!isset($d['tag'])){
+                        $d['tag'] = " ";
+                    }
                     $msg = "
                     ✅ رسید حسابرسی 🧮
 

@@ -14,13 +14,12 @@ use Illuminate\Support\Facades\Cache;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::any('/telegram',[\App\Http\Controllers\TelegramController::class,'index']);
+Route::any('/',[\App\Http\Controllers\TelegramController::class,'index']);
 Route::get('/c',function(){
 dd(Cache::get('log'));
+});
+Route::get('table', function () {
+    return view('table');
 });
 Route::get('init',function (){
   foreach(Channel::where('approve',1)->get() as $g){
